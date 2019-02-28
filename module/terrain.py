@@ -1,13 +1,15 @@
 import math, random, pygame
 
+window = pygame.display.get_surface()
+info = pygame.display.Info()
+screenW, screenH = info.current_h, info.current_w
+
 class terrain():
-    def __init__(self, sw, sh):
+    def __init__(self, ):
         self.terrainarray = []
         self.minh, self.maxh = 50, 100
         self.maxvar = 2
-        self.sw = sw
-        self.sh = sh
-        for x in range(sw):
+        for x in range(screenW):
             #first node check
             if(x > 1):
                 previous = self.terrainarray[x-1]
@@ -21,13 +23,13 @@ class terrain():
             else:
                 self.terrainarray.append((0, (100-50)/2))
     
-    def draw(self, screen):
+    def draw(self):
         temp = self.terrainarray
-        temp.insert(0, (0, self.sh))
-        temp.insert(-1, (self.sw, self.sh))
-        pygame.draw.polygon(screen, (0,0,255), temp)
+        temp.insert(0, (0, temp[0][1]))
+        temp.insert(-1, (screenW, temp[-1][1]))
+        pygame.draw.polygon(window, (0,0,255), temp)
 
-    def find(x):
+    def find(self, x):
         return self.terrainarray[x]
         
     def colisiondetect(self, cords):
@@ -52,7 +54,7 @@ class terrain():
         return temp
 
     
-        
+land = terrain()       
 
 
             
