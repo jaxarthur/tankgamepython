@@ -1,4 +1,4 @@
-import math, pygame, random, bullet, terrain, time
+import math, pygame, random, bullet, terrain, time, numpy
 
 window = pygame.display.get_surface()
 info = pygame.display.Info()
@@ -14,7 +14,8 @@ tanklist = []
 
 class tank():
     def __init__(self, typeofplayer, x):
-        tempx, tempy = terrain.land.find(x)
+        tempx = x
+        tempy = terrain.land.find(x)
         self.typeofplayer, self.x, self.y = typeofplayer, tempx, tempy
         self.ready = 0
         self.angle = 0
@@ -22,9 +23,9 @@ class tank():
         self.health = 100
 
     def gravity(self):
-        if self.y < 16+terrain.land.find(self.x)[1]:
+        if self.y < 16+terrain.land.find(self.x+8):
             self.y = self.y + 1
-        elif self.y > 16+terrain.land.find(self.x)[1]:
+        elif self.y > 16+terrain.land.find(self.x+8):
             self.y = self.y - 1
         
     def process(self):
@@ -52,6 +53,7 @@ class tank():
             
             if keys[pygame.K_f] and self.ready == 0:
                 self.ready = -1
+
         elif self.typeofplayer == "computer":
             if self.ready == 0:
                 self.power, self.angle = aiprocess(self.x, self.y)
@@ -97,8 +99,7 @@ def aiprocess(x, y):
     closest = 1000
     tempangle = 0
     temppower = 0
-    print("ai")
-    for i in range(100):
+    for i in range(1):
         angle = random.randint(-90,90)
         power = random.randint(0,100)
         mx = math.sin(math.radians(angle))*power/2
@@ -109,6 +110,7 @@ def aiprocess(x, y):
             temppower = power
             closest = simulate
     
+
     return temppower, tempangle
 
 def simulatebullet(x, y, mx, my, tx, ty):

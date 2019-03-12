@@ -21,8 +21,8 @@ class bullet():
 
     def deletebullet(self):
         if screenW - 10 > self.x > 10:
-            terrain.land.deform((self.x, self.y), 10)
-        tank.damage(self.x, self.y, 10)
+            terrain.land.deform((self.x, self.y))
+        tank.damage(self.x, self.y, 5)
         bulletlist.remove(self)
 
     def outofbounds(self):

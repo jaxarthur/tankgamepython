@@ -7,21 +7,28 @@ screenH = info.current_h
 
 class terrain():
     def __init__(self):
-        self.terrainarray = []
+        self.terrainarray = [[0, random.randint(50,100)]]
         self.maxvar = 2
-        for x in range(screenW):
-            #first node check
-            if(x > 1):
-                previous = self.terrainarray[x-1][1]
-                rand = 0
-                while rand < 1 or rand > 250: 
-                    rand = random.randint(previous-self.maxvar, previous+self.maxvar)
-                
-                self.terrainarray.append([x, int(rand)])
+        generating = True
+        while generating:
+            lastpoint = self.terrainarray[-1]
             
-            else:
-                self.terrainarray.append([0, 175])
-    
+            x = random.randint(lastpoint[0]+50, lastpoint[0]+60)
+            
+            y = random.randint(lastpoint[1]-30, lastpoint[1]+30)
+            if y < 50:
+                y = 50
+            elif y > 150:
+                y = 150
+            
+            if x > screenW:
+                x = screenW
+                generating = False
+
+            self.terrainarray.append([x, y])
+        
+        self.smooth()
+
     def draw(self):
         tempsurf = pygame.Surface((screenH, screenW))
         temp = self.terrainarray[0:]
@@ -32,36 +39,86 @@ class terrain():
         window.blit(tempsurf, (0,0))
 
     def find(self, x):
-        return self.terrainarray[x]
+        i = 0
+        x = int(x)
+        px = 0
+        while x > px:
+            i = i + 1
+            px = self.terrainarray[i][0]
         
+        point1 = self.terrainarray[i-1]
+        point2 = self.terrainarray[i]
+
+        try:
+            slope = (point2[1] - point1[1])/(point2[0] - point1[0])
+        except:
+            print(point1, point2)
+
+        height = point1[1] + (slope * (x - point1[0]))
+
+        return int(height)
+        
+    def slope(self, x):
+        i = 0
+        px = 0
+        while x < px:
+            i = i + 1
+            px = self.terrainarray[i][0]
+        
+        point1 = self.terrainarray[i-1]
+        point2 = self.terrainarray[i]
+
+        
+        slope = (point2[1] - point1[1])/(point2[0] - point1[0])
+    
+        return slope
+    
     def colisiondetect(self, cords):
-        if self.terrainarray[cords[0]][1] > cords[1]:
+        if self.find(cords[0]) > cords[1]:
             return True
         else:
             return False
 
-    def deform(self, cords, radius):
-        for i in range(radius*2):
-            x = i - radius
-            reletivedepresion = math.sqrt(math.pow(radius, 2) - math.pow(x, 2))
-            currentheight = self.find(int(x+cords[0]))[1]
-            fixeddepresion = currentheight - reletivedepresion
-            if fixeddepresion < currentheight - 15:
-                fixeddepresion = currentheight - 15
-            if fixeddepresion < 0:
-                fixeddepresion = currentheight
-
-            self.terrainarray[int(cords[0] + x)] = [cords[0]+x, fixeddepresion]
-    
-    def slope(self, cords):
-        temp = 0
-        for i in range(11):
-            x = i - 5
-            temp = temp + ((self.terrainarray[x+cords[0]] - cords[1]) * x)
+    def deform(self, cords):
+        replaced = False
         
-        return temp
-
+        for i in self.terrainarray:
+            if i[0] == cords[0]:
+                i = [cords[0], cords[1]-10]
+                replaced = True
+        
+        if replaced == False:
+            #remove nearby points
+            for i in self.terrainarray:
+                if i[0] > cords[0] - 10 and i[0] < cords[0] + 10:
+                    self.terrainarray.remove(i)
+            
+            #insert new point
+            i = 0
+            px = 0
+            x = cords[0]
+            while x > px:
+                i = i + 1
+                px = self.terrainarray[i][0]
+            
+            self.terrainarray.insert(i, [cords[0], cords[1]-10])
+            self.smooth()
     
+    def smooth(self):
+        runningsmooth = True
+        while runningsmooth:
+            ran = False
+            for i in self.terrainarray:
+                if self.slope(i[0]+1) > 1:
+                    i[1] = i[1]-1
+                    ran = True
+                elif self.slope(i[0]+1) < -1:
+                    i[1] = i[1]+1
+                    ran = True
+            if ran == False:
+                runningsmooth = False
+
+
 land = terrain()       
 
 

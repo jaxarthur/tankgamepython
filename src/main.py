@@ -1,16 +1,18 @@
 import pygame, math, random, time
 pygame.init()
+pygame.mixer.init()
 window = pygame.display.set_mode((800,800))
-import bullet, tank, terrain
+import bullet, tank, terrain, music, soundfx
 
+#music.init()
 
 running = True
 
 clock = pygame.time.Clock()
 
-tank.createtank("player", 50)
+tank.createtank("player", random.randint(25, 75))
 
-tank.createtank("computer", 400)
+tank.createtank("computer", random.randint(350, 500))
 
 while running:
     window.fill((0,0,0))
@@ -29,6 +31,8 @@ while running:
     #window = pygame.transform.rotate(window, 180)
     
     pygame.display.flip()
-    clock.tick(60)
+    clock.tick(20)
 
 pygame.quit()
+
+quit()
