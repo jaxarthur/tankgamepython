@@ -1,4 +1,4 @@
-import math, pygame, tank, terrain
+import math, pygame, tank, terrain, visualfx
 
 window = pygame.display.get_surface()
 info = pygame.display.Info()
@@ -22,6 +22,8 @@ class bullet():
     def deletebullet(self):
         if screenW - 10 > self.x > 10:
             terrain.land.deform((self.x, self.y))
+            visualfx.addeffect("explosion", self.x, self.y)
+            
         tank.damage(self.x, self.y, 5)
         bulletlist.remove(self)
 

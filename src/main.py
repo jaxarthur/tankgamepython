@@ -2,7 +2,7 @@ import pygame, math, random, time
 pygame.init()
 pygame.mixer.init()
 window = pygame.display.set_mode((800,800))
-import bullet, tank, terrain, music, soundfx
+import bullet, tank, terrain, music, soundfx, visualfx
 
 #music.init()
 
@@ -23,15 +23,17 @@ while running:
 
     tank.run()
     bullet.run()
+    visualfx.run()
 
     terrain.land.draw()
     tank.draw()
     bullet.draw()
+    visualfx.draw()
 
     #window = pygame.transform.rotate(window, 180)
     
     pygame.display.flip()
-    clock.tick(20)
+    clock.tick(60)
 
 pygame.quit()
 

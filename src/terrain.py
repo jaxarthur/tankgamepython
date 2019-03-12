@@ -42,7 +42,7 @@ class terrain():
         i = 0
         x = int(x)
         px = 0
-        while x > px:
+        while x > px and x < screenW:
             i = i + 1
             px = self.terrainarray[i][0]
         
@@ -61,7 +61,7 @@ class terrain():
     def slope(self, x):
         i = 0
         px = 0
-        while x < px:
+        while x > px:
             i = i + 1
             px = self.terrainarray[i][0]
         
@@ -90,7 +90,7 @@ class terrain():
         if replaced == False:
             #remove nearby points
             for i in self.terrainarray:
-                if i[0] > cords[0] - 10 and i[0] < cords[0] + 10:
+                if i[0] > cords[0] - 40 and i[0] < cords[0] + 40:
                     self.terrainarray.remove(i)
             
             #insert new point
@@ -108,13 +108,23 @@ class terrain():
         runningsmooth = True
         while runningsmooth:
             ran = False
+            print("smooth")
             for i in self.terrainarray:
-                if self.slope(i[0]+1) > 1:
-                    i[1] = i[1]-1
-                    ran = True
-                elif self.slope(i[0]+1) < -1:
-                    i[1] = i[1]+1
-                    ran = True
+                if i[0] > 0 and i[0] < screenW:
+                    if self.slope(i[0]+1) < -.5 and i[1]>0:
+                        i[1] = i[1]-1
+                        ran = True
+                    elif self.slope(i[0]+1) > +.5 and i[1]<250:
+                        i[1] = i[1]+1
+                        ran = True
+
+                    if self.slope(i[0]-1) < -.5 and i[1]<250:
+                        i[1] = i[1]+1
+                        ran = True
+                    elif self.slope(i[0]-1) > .5 and i[1] > 0:
+                        i[1] = i[1]-1
+                        ran = True
+            print(ran, self.slope(i[0]))
             if ran == False:
                 runningsmooth = False
 
